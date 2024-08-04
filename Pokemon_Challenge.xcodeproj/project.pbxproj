@@ -20,6 +20,8 @@
 		5FA355982C5EA6F70078A6FF /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA355972C5EA6F70078A6FF /* MainViewController.swift */; };
 		5FA3559A2C5EA7040078A6FF /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA355992C5EA7040078A6FF /* DetailViewController.swift */; };
 		5FA3559C2C5F26310078A6FF /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA3559B2C5F26310078A6FF /* UIColor.swift */; };
+		5FA3559F2C5F2E8D0078A6FF /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5FA3559E2C5F2E8D0078A6FF /* SnapKit */; };
+		5FA355A22C5F2EA30078A6FF /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5FA355A12C5F2EA30078A6FF /* RxSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FA355A22C5F2EA30078A6FF /* RxSwift in Frameworks */,
+				5FA3559F2C5F2E8D0078A6FF /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +140,10 @@
 			dependencies = (
 			);
 			name = Pokemon_Challenge;
+			packageProductDependencies = (
+				5FA3559E2C5F2E8D0078A6FF /* SnapKit */,
+				5FA355A12C5F2EA30078A6FF /* RxSwift */,
+			);
 			productName = Pokemon_Challenge;
 			productReference = 5FA355702C5EA5E70078A6FF /* Pokemon_Challenge.app */;
 			productType = "com.apple.product-type.application";
@@ -164,6 +172,10 @@
 				Base,
 			);
 			mainGroup = 5FA355672C5EA5E70078A6FF;
+			packageReferences = (
+				5FA3559D2C5F2E8D0078A6FF /* XCRemoteSwiftPackageReference "SnapKit" */,
+				5FA355A02C5F2EA30078A6FF /* XCRemoteSwiftPackageReference "RxSwift" */,
+			);
 			productRefGroup = 5FA355712C5EA5E70078A6FF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -413,6 +425,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5FA3559D2C5F2E8D0078A6FF /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		5FA355A02C5F2EA30078A6FF /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5FA3559E2C5F2E8D0078A6FF /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5FA3559D2C5F2E8D0078A6FF /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		5FA355A12C5F2EA30078A6FF /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5FA355A02C5F2EA30078A6FF /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		5FA3557C2C5EA5E70078A6FF /* Pokemon_Challenge.xcdatamodeld */ = {
