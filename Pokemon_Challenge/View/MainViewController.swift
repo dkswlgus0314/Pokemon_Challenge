@@ -1,12 +1,11 @@
-//
-//  MainViewController.swift
-//  Pokemon_Challenge
-//
-//  Created by ahnzihyeon on 8/4/24.
-//
 
 import Foundation
 
 class MainViewController: ViewController{
     
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("MainViewController 연결 완료")
+    }
 }
