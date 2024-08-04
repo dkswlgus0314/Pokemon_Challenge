@@ -3,3 +3,4 @@
 - refactor: 코드 리팩토링<br>
 - comment: 주석 추가 및 수정<br>
 - UI: UI 추가 및 수정 <br>
+- bug: 오류 발견 및 수정
