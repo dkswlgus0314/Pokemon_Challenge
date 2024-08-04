@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
 
         //초기 뷰 컨트롤러 설정
-        var navigationController = UINavigationController(rootViewController: MainViewController())
+        let navigationController = UINavigationController(rootViewController: MainViewController())
         window.rootViewController = navigationController
         // 이 메서드를 반드시 작성해줘야 윈도우가 활성화 됨.
         window.makeKeyAndVisible()
