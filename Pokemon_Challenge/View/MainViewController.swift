@@ -1,9 +1,16 @@
 
 import UIKit
 import SnapKit
+import RxSwift
 
 //포켓몬 도감 메인뷰
 class MainViewController: ViewController{
+    
+    private let disposeBag = DisposeBag()
+    private let viewModel = MainViewModel()
+    
+    private var pokemonList = [Result]()
+    
     //상단 포켓볼 로고 이미지
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -27,8 +34,22 @@ class MainViewController: ViewController{
         view.backgroundColor = UIColor.mainRed
         
         configureUI()
-        
+                bind()
+                print("MainVC 38번 줄: \(viewModel.fetchPokemonList())")
     }
+    
+    //MARK: -bind() : 데이터 바인딩
+        private func bind(){
+            viewModel.pokemonListSubject
+                .observe(on: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] pokemonList in
+                    self?.pokemonList = pokemonList
+                    self?.collectionView.reloadData()
+                },onError: { error in
+                    print("에러 발생: \(error)")
+                }).disposed(by: disposeBag)
+        }
+    
     
     //MARK: -configureUI() - 오토레이아웃
     private func configureUI(){
@@ -86,13 +107,14 @@ extension MainViewController: UICollectionViewDelegate {
 
 extension MainViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 30
+        return pokemonList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.id, for: indexPath) as? PokemonCell else {return UICollectionViewCell()}
         cell.backgroundColor = UIColor.cellBackground
         cell.layer.cornerRadius = 10
+        cell.configure(with: pokemonList[indexPath.row])
         return cell
     }
     
