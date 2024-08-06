@@ -1,13 +1,14 @@
-
 import UIKit
 import SnapKit
 import RxSwift
 
+
 //포켓몬 도감 메인뷰
-class MainViewController: ViewController{
+class MainViewController: UIViewController{
     
     private let disposeBag = DisposeBag()
     private let viewModel = MainViewModel()
+    private let detialViewModel = DetailViewModel()
     
     private var pokemonList = [Result]()
     
@@ -34,21 +35,20 @@ class MainViewController: ViewController{
         view.backgroundColor = UIColor.mainRed
         
         configureUI()
-                bind()
-                print("MainVC 38번 줄: \(viewModel.fetchPokemonList())")
+        bind()
     }
     
     //MARK: -bind() : 데이터 바인딩
-        private func bind(){
-            viewModel.pokemonListSubject
-                .observe(on: MainScheduler.instance)
-                .subscribe(onNext: { [weak self] pokemonList in
-                    self?.pokemonList = pokemonList
-                    self?.collectionView.reloadData()
-                },onError: { error in
-                    print("에러 발생: \(error)")
-                }).disposed(by: disposeBag)
-        }
+    private func bind(){
+        viewModel.pokemonListSubject
+            .observe(on: MainScheduler.instance) //구독한 데이터를 메인 스레드에서 처리.UI 업데이트는 메인 스레드에서.
+            .subscribe(onNext: { [weak self] pokemonList in
+                self?.pokemonList = pokemonList
+                self?.collectionView.reloadData()
+            },onError: { error in
+                print("메인뷰컨 바인딩 에러 발생: \(error)")
+            }).disposed(by: disposeBag)
+    }
     
     
     //MARK: -configureUI() - 오토레이아웃
@@ -90,13 +90,6 @@ class MainViewController: ViewController{
         }()
         return layout
     }
-    
-    
-    //MARK: -@objc
-    @objc private func buttonTapped(){
-        let detailVC = DetailViewController()
-        navigationController?.pushViewController(detailVC, animated: true)
-    }
 }
 
 
@@ -115,11 +108,15 @@ extension MainViewController: UICollectionViewDataSource{
         cell.backgroundColor = UIColor.cellBackground
         cell.layer.cornerRadius = 10
         cell.configure(with: pokemonList[indexPath.row])
+        print("메인뷰컨 pokemonList[indexPath.row]: (\(pokemonList[indexPath.row].id)")
         return cell
     }
     
     //cell tapped 했을 때 호출
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        detialViewModel.fetchPokemonDetail(pokemonId: pokemonList[indexPath.row].id)
+        
         let detailVC = DetailViewController()
         navigationController?.pushViewController(detailVC, animated: true)
     }

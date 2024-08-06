@@ -1,5 +1,6 @@
 import Foundation
 
+
 // MARK: - ResultsResponse 리스트 : limit 개씩 offset 부터 포켓몬 정보 로드
 struct ResultsResponse: Codable {
     let results: [Result]

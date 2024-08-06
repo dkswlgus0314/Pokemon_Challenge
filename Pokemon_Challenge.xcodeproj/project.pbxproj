@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		5FA355742C5EA5E70078A6FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA355732C5EA5E70078A6FF /* AppDelegate.swift */; };
 		5FA355762C5EA5E70078A6FF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA355752C5EA5E70078A6FF /* SceneDelegate.swift */; };
-		5FA355782C5EA5E70078A6FF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA355772C5EA5E70078A6FF /* ViewController.swift */; };
 		5FA3557E2C5EA5E70078A6FF /* Pokemon_Challenge.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5FA3557C2C5EA5E70078A6FF /* Pokemon_Challenge.xcdatamodeld */; };
 		5FA355802C5EA5E90078A6FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5FA3557F2C5EA5E90078A6FF /* Assets.xcassets */; };
 		5FA355832C5EA5E90078A6FF /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 5FA355822C5EA5E90078A6FF /* Base */; };
@@ -29,7 +28,6 @@
 		5FA355702C5EA5E70078A6FF /* Pokemon_Challenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pokemon_Challenge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA355732C5EA5E70078A6FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FA355752C5EA5E70078A6FF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		5FA355772C5EA5E70078A6FF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5FA3557D2C5EA5E70078A6FF /* Pokemon_Challenge.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Pokemon_Challenge.xcdatamodel; sourceTree = "<group>"; };
 		5FA3557F2C5EA5E90078A6FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5FA355822C5EA5E90078A6FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -82,7 +80,6 @@
 				5FA3558D2C5EA65B0078A6FF /* View */,
 				5FA355732C5EA5E70078A6FF /* AppDelegate.swift */,
 				5FA355752C5EA5E70078A6FF /* SceneDelegate.swift */,
-				5FA355772C5EA5E70078A6FF /* ViewController.swift */,
 				5FA3557F2C5EA5E90078A6FF /* Assets.xcassets */,
 				5FA355812C5EA5E90078A6FF /* LaunchScreen.storyboard */,
 				5FA355842C5EA5E90078A6FF /* Info.plist */,
@@ -206,7 +203,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA355942C5EA6D90078A6FF /* MainViewModel.swift in Sources */,
-				5FA355782C5EA5E70078A6FF /* ViewController.swift in Sources */,
 				5FA3557E2C5EA5E70078A6FF /* Pokemon_Challenge.xcdatamodeld in Sources */,
 				5FA355902C5EA6A10078A6FF /* NetworkManager.swift in Sources */,
 				5FA355742C5EA5E70078A6FF /* AppDelegate.swift in Sources */,

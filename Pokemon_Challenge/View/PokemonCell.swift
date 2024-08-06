@@ -1,11 +1,5 @@
-//
-//  PokemonCell.swift
-//  Pokemon_Challenge
-//
-//  Created by ahnzihyeon on 8/4/24.
-//
-
 import UIKit
+
 
 class PokemonCell: UICollectionViewCell {
     static let id = "PokemonCell"
@@ -41,6 +35,7 @@ class PokemonCell: UICollectionViewCell {
     func configure(with result: Result){
         let resultUrl = result.url
         let id = result.id
+        print("PokemonCell의 configure(with: )에 들어온 id : \(id)")
         
         let urlString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png"
         

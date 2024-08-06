@@ -1,6 +1,7 @@
 import Foundation
 import RxSwift
 
+
 enum NetworkError: Error {
     case invalidUrl
     case dataFetchFail

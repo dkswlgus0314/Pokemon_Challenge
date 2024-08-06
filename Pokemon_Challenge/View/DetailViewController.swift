@@ -1,8 +1,15 @@
-
 import UIKit
+import RxSwift
 import SnapKit
 
+
+//포켓몬 상세 뷰
 class DetailViewController: UIViewController {
+    
+    private let disposeBag = DisposeBag()
+    private let viewModel = DetailViewModel()
+    
+    
     
     let pokemonImage: UIImageView = {
         let imageView = UIImageView()
@@ -56,12 +63,29 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
+    
+    //MARK: -override
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.mainRed
         
         configureUI()
+        bind()
     }
+    
+    //MARK: -bind() : 데이터 바인딩
+    private func bind(){
+        viewModel.pokemonSubjet
+            .observe(on: MainScheduler.instance)  //구독한 데이터를 메인 스레드에서 처리.UI 업데이트는 메인 스레드에서.
+            .subscribe (onNext: { pokemon in
+                
+                print("디테일뷰컨 \(pokemon)")
+            }, onError: { error in
+                print("상세뷰컨 데이터 바인딩 에러 발생: \(error) ")
+            }).disposed(by: disposeBag)
+
+    }
+    
     
     private func configureUI(){
         [stackView].forEach { view.addSubview($0)}

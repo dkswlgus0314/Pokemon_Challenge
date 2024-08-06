@@ -1,5 +1,6 @@
 import UIKit
 
+
 //사용될 컬러
 extension UIColor {
     static let mainRed = UIColor(red: 190/255, green: 30/255, blue: 40/255, alpha: 1.0)

@@ -1,6 +1,6 @@
-
 import Foundation
 import RxSwift
+
 
 class MainViewModel {
     
@@ -9,7 +9,6 @@ class MainViewModel {
     
     //view가 구독할 Subject
     let pokemonListSubject = BehaviorSubject(value: [Result]())
-    //    let pokemonSubjet = BehaviorSubject(value: [Pokemon]())
     
     
     init(){
@@ -19,7 +18,7 @@ class MainViewModel {
     //0부터 20개씩 포켓몬 정보 로드
     func fetchPokemonList() {
         guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=20&offset=0") else {pokemonListSubject.onError(NetworkError.invalidUrl)
-            print("NetworkError: 유효하지 않은 url")
+            print("NetworkError: 유효하지 않은 pokemonList url")
             return }
         
         NetworkManager.shared.fetch(url: url)
