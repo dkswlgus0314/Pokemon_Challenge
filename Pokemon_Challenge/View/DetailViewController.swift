@@ -7,7 +7,7 @@ import SnapKit
 class DetailViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
-    private let viewModel = DetailViewModel()
+    private let viewModel: DetailViewModel
     
     
     
@@ -64,6 +64,15 @@ class DetailViewController: UIViewController {
     }()
     
     
+    init(viewModel: DetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     //MARK: -override
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,7 +82,12 @@ class DetailViewController: UIViewController {
         bind()
     }
     
-    //MARK: -bind() : 데이터 바인딩
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.fetchPokemonDetail()  //뷰모델에 요청
+    }
+    
+    //MARK: -bind() : 데이터 바인딩 해야 구독 방출 할 수 있음
     private func bind(){
         viewModel.pokemonSubjet
             .observe(on: MainScheduler.instance)  //구독한 데이터를 메인 스레드에서 처리.UI 업데이트는 메인 스레드에서.

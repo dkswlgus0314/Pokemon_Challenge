@@ -5,121 +5,130 @@ import RxSwift
 
 //포켓몬 도감 메인뷰
 class MainViewController: UIViewController{
+  
+  private let disposeBag = DisposeBag() //구독해제를 위한 DisposeBag
+  private let mainViewModel = MainViewModel() //메인뷰모델 인스턴스를 생성 해 뷰모델 기능 사용
+  private var pokemonList = [Result]() //뷰모델에서 제공하는 포켓몬 리스트 데이터를 저장할 배열
+  
+  let logoImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = UIImage(named: "pokemonBall")
+    return imageView
+  }()   //상단 포켓볼 로고 이미지
+  private lazy var collectionView: UICollectionView = {
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCellLayout())
+    collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.id)
+    collectionView.dataSource = self
+    collectionView.delegate = self
+    collectionView.backgroundColor = #colorLiteral(red: 0.4334821701, green: 0.1452553272, blue: 0.1374996305, alpha: 1)
+    return collectionView
+  }()
+
+  
+  //MARK: -viewDidLoad
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = UIColor.mainRed
+    configureUI()
+    bind()
+  }
+  
+  //MARK: -bind() : 데이터 바인딩
+  //뷰모델의 pokemonListSubject를 구독하여 데이터를 받아오고 데이터가 업데이트 되면 pokemonList 배열 갱신 및 컬렉션뷰 리로드
+  private func bind(){
+    //뷰모델에서 제공하는 Subject로 새로운 포켓몬 리스트 데이터를 방출
+    mainViewModel.pokemonListSubject
     
-    private let disposeBag = DisposeBag()
-    private let viewModel = MainViewModel()
-    private let detialViewModel = DetailViewModel()
+    //방출된 데이터를 메인 스레드에서 처리(UI 업데이트는 메인 스레드에서)
+      .observe(on: MainScheduler.instance)
     
-    private var pokemonList = [Result]()
+    //메인뷰모델의 pokemonListSubject를 구독(pokemonList). 새로운 데이터 방출될 때마다 클로저 실행
+    //여기서 onNext는 데이터를 구독하는 역할
+      .subscribe(onNext: { [weak self] pokemonList in
+        
+        //방출된 데이터를 받아서 포켓몬 리스트 배열에 업데이트
+        self?.pokemonList = pokemonList
+        
+        //pokemonList 배열이 업데이트돼서 collectionView.reloadData()가 호출되면 컬렉션뷰는 이 새로운 데이터를 사용하여 셀을 다시 구성.
+        //컬렉션뷰는 dataSource메서드(numberOfItemsInSection 및 cellForItemAt)를 호출해 셀에 데이터 업데이트.
+        self?.collectionView.reloadData()
+      },onError: { error in
+        print("메인뷰컨 바인딩 에러 발생: \(error)")
+        //disposeBag에 추가해 메모리 해제 관리
+      }).disposed(by: disposeBag)
+  }
+  
+  
+  //MARK: -configureUI() - 오토레이아웃
+  private func configureUI(){
+    [logoImageView, collectionView].forEach { view.addSubview($0) }
     
-    //상단 포켓볼 로고 이미지
-    let logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "pokemonBall")
-        return imageView
+    logoImageView.snp.makeConstraints { make in
+      make.width.height.equalTo(100)
+      make.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+      make.centerX.equalToSuperview()
+    }
+    
+    collectionView.snp.makeConstraints { make in
+      make.top.equalTo(logoImageView.snp.bottom).offset(24)
+      make.horizontalEdges.equalTo(view.safeAreaLayoutGuide.snp.horizontalEdges)
+      make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+    }
+  }
+  
+  
+  //MARK: -createCellLayout(): 컬렉션뷰 레이아웃
+  private func createCellLayout() -> UICollectionViewLayout {
+    ///각 셀간의 간격 10 설정
+    let itemSpacing: CGFloat = 10
+    
+    /// row당 3개의 cell을 설정
+    let itemsPerRow: CGFloat = 3
+    
+    ///셀의 가로길이 :  (뷰의 넓이 -  (row당 셀의 갯수 - 1) * 셀 간격 / row당 셀의 갯수
+    let width = (view.frame.width - (itemsPerRow - 1) * itemSpacing) / itemsPerRow
+    
+    let layout = {
+      let layout = UICollectionViewFlowLayout()
+      layout.scrollDirection = .vertical // 스크롤을 방향 (기본값 vertical)
+      layout.itemSize = CGSize(width: width, height: width) //정사각형
+      layout.minimumLineSpacing = itemSpacing  //열과 열사이 간격
+      layout.minimumInteritemSpacing = itemSpacing //아이템과 아이템 사이의 간격
+      return layout
     }()
-    
-    private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCellLayout())
-        collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.id)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.backgroundColor = #colorLiteral(red: 0.4334821701, green: 0.1452553272, blue: 0.1374996305, alpha: 1)
-        return collectionView
-    }()
-    
-    
-    //MARK: -viewDidLoad
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = UIColor.mainRed
-        
-        configureUI()
-        bind()
-    }
-    
-    //MARK: -bind() : 데이터 바인딩
-    private func bind(){
-        viewModel.pokemonListSubject
-            .observe(on: MainScheduler.instance) //구독한 데이터를 메인 스레드에서 처리.UI 업데이트는 메인 스레드에서.
-            .subscribe(onNext: { [weak self] pokemonList in
-                self?.pokemonList = pokemonList
-                self?.collectionView.reloadData()
-            },onError: { error in
-                print("메인뷰컨 바인딩 에러 발생: \(error)")
-            }).disposed(by: disposeBag)
-    }
-    
-    
-    //MARK: -configureUI() - 오토레이아웃
-    private func configureUI(){
-        [logoImageView, collectionView].forEach { view.addSubview($0) }
-        
-        logoImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(100)
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(16)
-            make.centerX.equalToSuperview()
-        }
-        
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(logoImageView.snp.bottom).offset(24)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide.snp.horizontalEdges)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-        }
-    }
-    
-    
-    //MARK: -createCellLayout(): 컬렉션뷰 레이아웃
-    private func createCellLayout() -> UICollectionViewLayout {
-        ///각 셀간의 간격 10 설정
-        let itemSpacing: CGFloat = 10
-        
-        /// row당 3개의 cell을 설정
-        let itemsPerRow: CGFloat = 3
-        
-        ///셀의 가로길이 :  (뷰의 넓이 -  (row당 셀의 갯수 - 1) * 셀 간격 / row당 셀의 갯수
-        let width = (view.frame.width - (itemsPerRow - 1) * itemSpacing) / itemsPerRow
-        
-        let layout = {
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .vertical // 스크롤을 방향 (기본값 vertical)
-            layout.itemSize = CGSize(width: width, height: width) //정사각형
-            layout.minimumLineSpacing = itemSpacing  //열과 열사이 간격
-            layout.minimumInteritemSpacing = itemSpacing //아이템과 아이템 사이의 간격
-            return layout
-        }()
-        return layout
-    }
+    return layout
+  }
 }
 
 
 //MARK: -extension
 extension MainViewController: UICollectionViewDelegate {
-    
+  
 }
 
+//섹션의 아이템 수 반환
 extension MainViewController: UICollectionViewDataSource{
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pokemonList.count
-    }
+  func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    return pokemonList.count
+  }
+  
+  //각 셀을 구성
+  func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.id, for: indexPath) as? PokemonCell else {return UICollectionViewCell()}
+    cell.backgroundColor = UIColor.cellBackground
+    cell.layer.cornerRadius = 10
+    cell.configure(with: pokemonList[indexPath.row])
+    print("메인뷰컨 pokemonList[indexPath.row]: (\(pokemonList[indexPath.row].id)")
+    return cell
+  }
+  
+  //cell tapped 했을 때 호출
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.id, for: indexPath) as? PokemonCell else {return UICollectionViewCell()}
-        cell.backgroundColor = UIColor.cellBackground
-        cell.layer.cornerRadius = 10
-        cell.configure(with: pokemonList[indexPath.row])
-        print("메인뷰컨 pokemonList[indexPath.row]: (\(pokemonList[indexPath.row].id)")
-        return cell
-    }
-    
-    //cell tapped 했을 때 호출
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        detialViewModel.fetchPokemonDetail(pokemonId: pokemonList[indexPath.row].id)
-        
-        let detailVC = DetailViewController()
-        navigationController?.pushViewController(detailVC, animated: true)
-    }
-    
-    
+    //DetailViewController 인스턴스를 생성.생성된 DetailViewModel을 매개변수로 전달할 때 id를 제공.
+    let detailVC = DetailViewController(viewModel: DetailViewModel(pokemonId: pokemonList[indexPath.row].id))
+    navigationController?.pushViewController(detailVC, animated: true)
+  }
+  
+  
 }
