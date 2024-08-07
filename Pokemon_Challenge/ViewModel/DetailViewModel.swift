@@ -26,8 +26,8 @@ class DetailViewModel {
     }
     
     NetworkManager.shared.fetch(url: url)
-      .subscribe(onSuccess: { [weak self] (pokemon: Pokemon) in
-        self?.pokemonSubjet.onNext(pokemon)
+      .subscribe(onSuccess: { [weak self] (pokemon: PokemonResponseDTO) in
+        self?.pokemonSubjet.onNext(pokemon.toDomain())
       }, onFailure: {[weak self] error in
         self?.pokemonSubjet.onError(error)
       }).disposed(by: disposeBag)

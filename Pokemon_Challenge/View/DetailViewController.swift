@@ -88,26 +88,21 @@ class DetailViewController: UIViewController {
       .subscribe (onNext: { [weak self] pokemon in
         guard let self else {return}
         
-        NetworkManager.shared.configure(with: pokemon.id ?? 0, completion: { image in
+        NetworkManager.shared.configure(with: pokemon.id, completion: { image in
           self.pokemonImage.image = image
         })
         
-        self.numberAndNameLabel.text = "No.\(pokemon.id ?? 0)   \(pokemon.name ?? "nil")"
-        
-        //pokemon.types.type.name이 되지 않는 이유: types가 배열이기 때문에 배열의 각 요소에 접근해야해서 map함수 사용
-        //joined(separator:) 메서드를 사용하여 배열의 모든 요소를 하나의 문자열로 결합
-        let typeNames = pokemon.types.compactMap{$0.type.name}.joined(separator: ",")
-          self.typeLabel.text = "타입 : \(typeNames)"
-        self.heightLabel.text = "키 : \(Double(pokemon.height ?? 0) / 10) m"
-        
-        self.weightLabel.text =
-        "몸무게 : \(Double(pokemon.weight ?? 0) / 10) kg"
+        self.numberAndNameLabel.text = pokemon.title
+        self.typeLabel.text = pokemon.type
+        self.heightLabel.text = pokemon.height
+        self.weightLabel.text = pokemon.weight
 
       }, onError: { error in
         print("상세뷰컨 데이터 바인딩 에러 발생: \(error) ")
       }).disposed(by: disposeBag)
     
   }
+  
   
   private func configureUI(){
     [stackView].forEach { view.addSubview($0)}
