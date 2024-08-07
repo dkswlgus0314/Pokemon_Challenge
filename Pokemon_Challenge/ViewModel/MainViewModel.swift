@@ -32,9 +32,6 @@ class MainViewModel {
         //resultsResponse.results 데이터를 pokemonListSubject를 통해 구독자에게 전달
         //여기서 onNext는 데이터 방출하는 역할
         self?.pokemonListSubject.onNext(resultsResponse.results)
-        
-        print("MainViewModel 27번줄: \(resultsResponse.results)")
-        
       }, onFailure: { [weak self] error in
         self?.pokemonListSubject.onError(error)
       }).disposed(by: disposeBag)

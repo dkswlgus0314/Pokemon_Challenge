@@ -10,11 +10,14 @@ class MainViewController: UIViewController{
   private let mainViewModel = MainViewModel() //메인뷰모델 인스턴스를 생성 해 뷰모델 기능 사용
   private var pokemonList = [Result]() //뷰모델에서 제공하는 포켓몬 리스트 데이터를 저장할 배열
   
+  
+  //상단 포켓볼 로고 이미지
   let logoImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.image = UIImage(named: "pokemonBall")
     return imageView
-  }()   //상단 포켓볼 로고 이미지
+  }()
+  
   private lazy var collectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCellLayout())
     collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.id)
@@ -45,13 +48,14 @@ class MainViewController: UIViewController{
     //메인뷰모델의 pokemonListSubject를 구독(pokemonList). 새로운 데이터 방출될 때마다 클로저 실행
     //여기서 onNext는 데이터를 구독하는 역할
       .subscribe(onNext: { [weak self] pokemonList in
+        guard let self else {return}
         
         //방출된 데이터를 받아서 포켓몬 리스트 배열에 업데이트
-        self?.pokemonList = pokemonList
+        self.pokemonList = pokemonList
         
         //pokemonList 배열이 업데이트돼서 collectionView.reloadData()가 호출되면 컬렉션뷰는 이 새로운 데이터를 사용하여 셀을 다시 구성.
         //컬렉션뷰는 dataSource메서드(numberOfItemsInSection 및 cellForItemAt)를 호출해 셀에 데이터 업데이트.
-        self?.collectionView.reloadData()
+        self.collectionView.reloadData()
       },onError: { error in
         print("메인뷰컨 바인딩 에러 발생: \(error)")
         //disposeBag에 추가해 메모리 해제 관리
@@ -117,7 +121,12 @@ extension MainViewController: UICollectionViewDataSource{
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.id, for: indexPath) as? PokemonCell else {return UICollectionViewCell()}
     cell.backgroundColor = UIColor.cellBackground
     cell.layer.cornerRadius = 10
-    cell.configure(with: pokemonList[indexPath.row])
+//    cell.configure(with: pokemonList[indexPath.row]) //셀에 이미지 불러오기
+    NetworkManager.shared.configure(with: pokemonList[indexPath.row].id){ image in
+      cell.imageView.image = image
+      
+    }
+    
     print("메인뷰컨 pokemonList[indexPath.row]: (\(pokemonList[indexPath.row].id)")
     return cell
   }

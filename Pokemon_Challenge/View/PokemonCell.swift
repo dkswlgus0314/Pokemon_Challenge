@@ -31,26 +31,26 @@ class PokemonCell: UICollectionViewCell {
     }
     
     
-    //MARK: -포켓몬 이미지 가져오는 메서드
-    func configure(with result: Result){
-        let resultUrl = result.url
-        let id = result.id
-        print("PokemonCell의 configure(with: )에 들어온 id : \(id)")
-        
-        let urlString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png"
-        
-        guard let url = URL(string: urlString) else {return}
-        
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {  // URL에서 데이터를 가져옴
-                DispatchQueue.main.async {  // 메인 큐에서 UI 업데이트 수행
-                    if let image = UIImage(data: data) {
-                        self?.imageView.image = image  // 이미지 뷰에 이미지 설정
-                    }
-                }
-            }
-        }
-    }
+//    //MARK: -포켓몬 이미지 가져오는 메서드
+//    func configure(with result: Result){
+//        let resultUrl = result.url
+//        let id = result.id
+//        print("PokemonCell의 configure(with: )에 들어온 id : \(id)")
+//        
+//        let urlString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png"
+//        
+//        guard let url = URL(string: urlString) else {return}
+//        
+//        DispatchQueue.global().async { [weak self] in
+//            if let data = try? Data(contentsOf: url) {  // URL에서 데이터를 가져옴
+//                DispatchQueue.main.async {  // 메인 큐에서 UI 업데이트 수행
+//                    if let image = UIImage(data: data) {
+//                        self?.imageView.image = image  // 이미지 뷰에 이미지 설정
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     
 }
