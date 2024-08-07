@@ -12,7 +12,6 @@ class DetailViewController: UIViewController {
   
   let pokemonImage: UIImageView = {
     let imageView = UIImageView()
-    imageView.image = UIImage(named: "pokemonBall")
     imageView.contentMode = .scaleAspectFill
     return imageView
   }()
@@ -20,13 +19,13 @@ class DetailViewController: UIViewController {
   let numberAndNameLabel: UILabel = {
     let label = UILabel()
     label.font = .boldSystemFont(ofSize: 32)
+    label.numberOfLines = 0
     label.textColor = .white
     return label
   }()   //도감번호, 이름
   
   let typeLabel: UILabel = {
     let label = UILabel()
-    label.text = "타입: 물"
     label.font = .systemFont(ofSize: 24)
     label.textColor = .white
     return label
@@ -94,11 +93,15 @@ class DetailViewController: UIViewController {
         })
         
         self.numberAndNameLabel.text = "No.\(pokemon.id ?? 0)   \(pokemon.name ?? "nil")"
-//        self.typeLabel.text = "타입 : \(pokemon.types)"
-        print("타입체크: \(pokemon.types)")
-        self.heightLabel.text = "키 : \(pokemon.height ?? 0)"
+        
+        //pokemon.types.type.name이 되지 않는 이유: types가 배열이기 때문에 배열의 각 요소에 접근해야해서 map함수 사용
+        //joined(separator:) 메서드를 사용하여 배열의 모든 요소를 하나의 문자열로 결합
+        let typeNames = pokemon.types.compactMap{$0.type.name}.joined(separator: ",")
+          self.typeLabel.text = "타입 : \(typeNames)"
+        self.heightLabel.text = "키 : \(Double(pokemon.height ?? 0) / 10) m"
+        
         self.weightLabel.text =
-        "몸무게 : \(pokemon.weight ?? 0)"
+        "몸무게 : \(Double(pokemon.weight ?? 0) / 10) kg"
 
       }, onError: { error in
         print("상세뷰컨 데이터 바인딩 에러 발생: \(error) ")
