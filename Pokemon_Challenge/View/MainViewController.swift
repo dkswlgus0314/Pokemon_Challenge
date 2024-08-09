@@ -3,14 +3,14 @@ import SnapKit
 import RxSwift
 
 
-//포켓몬 도감 메인뷰
+// 포켓몬 도감 메인뷰
 class MainViewController: UIViewController {
   
   private let disposeBag = DisposeBag() //구독해제를 위한 DisposeBag
   private let mainViewModel = MainViewModel() //메인뷰모델 인스턴스를 생성 해 뷰모델 기능 사용
   private var pokemonList = [Result]() //뷰모델에서 제공하는 포켓몬 리스트 데이터를 저장할 배열
   
-  //무한스크롤 구현
+  // 무한스크롤 구현
   /*var isLoading = false를 사용하는 이유는 중복된 데이터 요청을 방지하기 위해서
    스크롤할 때 scrollViewDidScroll 메서드가 여러 번 호출될 수 있는데, 이때 isLoading 플래그를 사용하여 데이터가 이미 로드 중인지 확인.
    isLoading = true: 데이터 로드 중이므로 추가 요청을 막음.
@@ -45,25 +45,24 @@ class MainViewController: UIViewController {
   }
   
   //MARK: - bind() : 데이터 바인딩
-  //뷰모델의 pokemonListSubject를 구독하여 데이터를 받아오고 데이터가 업데이트 되면 pokemonList 배열 갱신 및 컬렉션뷰 리로드
+  // 뷰모델의 pokemonListSubject를 구독하여 데이터를 받아오고 데이터가 업데이트 되면 pokemonList 배열 갱신 및 컬렉션뷰 리로드
   private func bind() {
-    //뷰모델에서 제공하는 Subject로 새로운 포켓몬 리스트 데이터를 방출
+    // 뷰모델에서 제공하는 Subject로 새로운 포켓몬 리스트 데이터를 방출
     mainViewModel.pokemonListSubject
     
-    //방출된 데이터를 메인 스레드에서 처리(UI 업데이트는 메인 스레드에서)
+    // 방출된 데이터를 메인 스레드에서 처리(UI 업데이트는 메인 스레드에서)
       .observe(on: MainScheduler.instance)
     
-    //메인뷰모델의 pokemonListSubject를 구독(pokemonList). 새로운 데이터 방출될 때마다 클로저 실행
-    //여기서 onNext는 데이터를 구독하는 역할
+    // 메인뷰모델의 pokemonListSubject를 구독(pokemonList). 새로운 데이터 방출될 때마다 클로저 실행
+    // 여기서 onNext는 데이터를 구독하는 역할
       .subscribe(onNext: { [weak self] pokemonList in
         guard let self else { return }
         
-        //방출된 데이터를 받아서 포켓몬 리스트 배열에 업데이트
-        //        self.pokemonList = pokemonList
+        // 방출된 데이터를 받아서 포켓몬 리스트 배열에 업데이트
         self.pokemonList.append(contentsOf: pokemonList)
         
-        //pokemonList 배열이 업데이트돼서 collectionView.reloadData()가 호출되면 컬렉션뷰는 이 새로운 데이터를 사용하여 셀을 다시 구성.
-        //컬렉션뷰는 dataSource메서드(numberOfItemsInSection 및 cellForItemAt)를 호출해 셀에 데이터 업데이트.
+        // pokemonList 배열이 업데이트돼서 collectionView.reloadData()가 호출되면 컬렉션뷰는 이 새로운 데이터를 사용하여 셀을 다시 구성.
+        // 컬렉션뷰는 dataSource메서드(numberOfItemsInSection 및 cellForItemAt)를 호출해 셀에 데이터 업데이트.
         self.collectionView.reloadData()
         isLoading = false
       },onError: { [weak self] error in
@@ -94,13 +93,13 @@ class MainViewController: UIViewController {
   
   //MARK: - createCellLayout(): 컬렉션뷰 레이아웃
   private func createCellLayout() -> UICollectionViewLayout {
-    ///각 셀간의 간격 10 설정
+    // 각 셀간의 간격 10 설정
     let itemSpacing: CGFloat = 10
     
-    /// row당 3개의 cell을 설정
+    // row당 3개의 cell을 설정
     let itemsPerRow: CGFloat = 3
     
-    ///셀의 가로길이 :  (뷰의 넓이 -  (row당 셀의 갯수 - 1) * 셀 간격 / row당 셀의 갯수
+    //셀의 가로길이 :  (뷰의 넓이 -  (row당 셀의 갯수 - 1) * 셀 간격 / row당 셀의 갯수
     let width = (view.frame.width - (itemsPerRow - 1) * itemSpacing) / itemsPerRow
     
     let layout = {
@@ -131,39 +130,35 @@ extension MainViewController: UICollectionViewDelegate {
         isLoading = true
         // 서버에서 다음 페이지 GET
         mainViewModel.fetchPokemonList()
-        //        collectionView.reloadData()
         
       }
     }
-    
   }
   
 }
 
-//섹션의 아이템 수 반환
+// 섹션의 아이템 수 반환
 extension MainViewController: UICollectionViewDataSource{
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return pokemonList.count
   }
   
-  //각 셀을 구성
+  // 각 셀을 구성
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.id, for: indexPath) as? PokemonCell else {return UICollectionViewCell()}
     cell.backgroundColor = UIColor.cellBackground
     cell.layer.cornerRadius = 10
-    //    cell.configure(with: pokemonList[indexPath.row]) //셀에 이미지 불러오기
     NetworkManager.shared.configure(with: pokemonList[indexPath.row].id){ image in
       cell.imageView.image = image
     }
-    
-    //    print("메인뷰컨 pokemonList[indexPath.row]: \(pokemonList[indexPath.row].id)")
+
     return cell
   }
   
-  //cell tapped 했을 때 호출
+  // cell tapped 했을 때 호출
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     
-    //DetailViewController 인스턴스를 생성.생성된 DetailViewModel을 매개변수로 전달할 때 id를 제공.
+    // DetailViewController 인스턴스를 생성.생성된 DetailViewModel을 매개변수로 전달할 때 id를 제공.
     let detailVC = DetailViewController(viewModel: DetailViewModel(pokemonId: pokemonList[indexPath.row].id))
     navigationController?.pushViewController(detailVC, animated: true)
   }

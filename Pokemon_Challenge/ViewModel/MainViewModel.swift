@@ -5,20 +5,18 @@ import RxSwift
 class MainViewModel {
   
   private var offsetNum = 0
-  
   private var urlString: String { "https://pokeapi.co/api/v2/pokemon?limit=20&offset=\(offsetNum)" }
   
   // 구독 해제를 위한 Disposebag
   private let disposeBag = DisposeBag()
   
-  // view가 구독할 Subject. 초기값은??
+  // view가 구독할 Subject.
   // 포켓몬 리스트를 API로부터 가져와 BehaviorSubject를 통해 방출. 구독하는 뷰에서 데이터를 실시간으로 받을 수 있음.
   let pokemonListSubject = BehaviorSubject(value: [Result]())
   
   // let pokemonListSubject = PublishSubject<[Result]>() //컬렉션뷰에 이미지가 안뜸
   
-  
-  // 0부터 20개씩 포켓몬 정보 로드
+  //MARK: - 0부터 20개씩 포켓몬 정보 로드
   func fetchPokemonList() {
     
     guard let url = URL(string: urlString) else {

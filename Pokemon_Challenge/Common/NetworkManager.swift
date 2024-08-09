@@ -13,7 +13,7 @@ class NetworkManager {
   static let shared = NetworkManager()
   private init() {}
   
-  // 공통으로 사용하는 네트워크 통신 코드
+  //MARK: - 공통으로 사용하는 네트워크 통신 코드
   // 네트워크 로직을 수행하고, 결과를 Single 로 리턴함.
   // Single 은 오직 한 번만 값을 뱉는 Observable 이기 때문에 서버에서 데이터를 한 번 불러올 때 적절.
   func fetch<T: Decodable>(url: URL) -> Single<T> {
@@ -51,27 +51,12 @@ class NetworkManager {
   //MARK: - 포켓몬 이미지 가져오는 메서드
   func configure(with id: Int, completion: @escaping (UIImage?) -> Void) {
     
-    
     let urlString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png"
     
     guard let url = URL(string: urlString) else {
       completion(nil)
       return
     }
-    
-    //    URLSession.shared.dataTask(with: url) { data, response, error in
-    //      guard let data = data, error == nil else {
-    //        completion(nil)
-    //        return
-    //      }
-    //
-    //      let image = UIImage(data: data)
-    //      DispatchQueue.main.async {
-    //        completion(image)
-    //      }
-    //    }.resume()
-    
-    //데이터를 직접 받아오는 것, 위에는 urlsession 통신
     
     DispatchQueue.global().async {
       if let data = try? Data(contentsOf: url) {  // URL에서 데이터를 가져옴
