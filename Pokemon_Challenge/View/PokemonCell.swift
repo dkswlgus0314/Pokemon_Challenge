@@ -14,7 +14,7 @@ class PokemonCell: UICollectionViewCell {
     }()
     
     
-    //MARK: -override
+    //MARK: - override
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(imageView)

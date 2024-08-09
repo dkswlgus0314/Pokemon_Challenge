@@ -4,12 +4,18 @@ import RxSwift
 
 
 //포켓몬 도감 메인뷰
-class MainViewController: UIViewController{
+class MainViewController: UIViewController {
   
   private let disposeBag = DisposeBag() //구독해제를 위한 DisposeBag
   private let mainViewModel = MainViewModel() //메인뷰모델 인스턴스를 생성 해 뷰모델 기능 사용
   private var pokemonList = [Result]() //뷰모델에서 제공하는 포켓몬 리스트 데이터를 저장할 배열
   
+  //무한스크롤 구현
+  /*var isLoading = false를 사용하는 이유는 중복된 데이터 요청을 방지하기 위해서
+   스크롤할 때 scrollViewDidScroll 메서드가 여러 번 호출될 수 있는데, 이때 isLoading 플래그를 사용하여 데이터가 이미 로드 중인지 확인.
+   isLoading = true: 데이터 로드 중이므로 추가 요청을 막음.
+   isLoading = false: 데이터 로드가 완료되면 새로운 요청을 허용.
+   */
   var isLoading = false
   
   
@@ -30,7 +36,7 @@ class MainViewController: UIViewController{
   }()
   
   
-  //MARK: -viewDidLoad
+  //MARK: - viewDidLoad
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor.mainRed
@@ -38,9 +44,9 @@ class MainViewController: UIViewController{
     bind()
   }
   
-  //MARK: -bind() : 데이터 바인딩
+  //MARK: - bind() : 데이터 바인딩
   //뷰모델의 pokemonListSubject를 구독하여 데이터를 받아오고 데이터가 업데이트 되면 pokemonList 배열 갱신 및 컬렉션뷰 리로드
-  private func bind(){
+  private func bind() {
     //뷰모델에서 제공하는 Subject로 새로운 포켓몬 리스트 데이터를 방출
     mainViewModel.pokemonListSubject
     
@@ -50,7 +56,7 @@ class MainViewController: UIViewController{
     //메인뷰모델의 pokemonListSubject를 구독(pokemonList). 새로운 데이터 방출될 때마다 클로저 실행
     //여기서 onNext는 데이터를 구독하는 역할
       .subscribe(onNext: { [weak self] pokemonList in
-        guard let self else {return}
+        guard let self else { return }
         
         //방출된 데이터를 받아서 포켓몬 리스트 배열에 업데이트
         //        self.pokemonList = pokemonList
@@ -59,15 +65,17 @@ class MainViewController: UIViewController{
         //pokemonList 배열이 업데이트돼서 collectionView.reloadData()가 호출되면 컬렉션뷰는 이 새로운 데이터를 사용하여 셀을 다시 구성.
         //컬렉션뷰는 dataSource메서드(numberOfItemsInSection 및 cellForItemAt)를 호출해 셀에 데이터 업데이트.
         self.collectionView.reloadData()
-      },onError: { error in
+        isLoading = false
+      },onError: { [weak self] error in
         print("메인뷰컨 바인딩 에러 발생: \(error)")
+        guard let self else { return }
         self.isLoading = false
       }).disposed(by: disposeBag) //disposeBag에 추가해 메모리 해제 관리
   }
   
   
-  //MARK: -configureUI() - 오토레이아웃
-  private func configureUI(){
+  //MARK: - configureUI() - 오토레이아웃
+  private func configureUI() {
     [logoImageView, collectionView].forEach { view.addSubview($0) }
     
     logoImageView.snp.makeConstraints { make in
@@ -84,7 +92,7 @@ class MainViewController: UIViewController{
   }
   
   
-  //MARK: -createCellLayout(): 컬렉션뷰 레이아웃
+  //MARK: - createCellLayout(): 컬렉션뷰 레이아웃
   private func createCellLayout() -> UICollectionViewLayout {
     ///각 셀간의 간격 10 설정
     let itemSpacing: CGFloat = 10
@@ -108,7 +116,7 @@ class MainViewController: UIViewController{
 }
 
 
-//MARK: -extension
+//MARK: - extension
 extension MainViewController: UICollectionViewDelegate {
   /**scrollViewDidScroll는 UIScrollViewDelegate 프로토콜에 명시된 메서드.
    UICollectionViewDelegate는 UIScrollViewDelegate을 채택하고 있다.
@@ -120,13 +128,14 @@ extension MainViewController: UICollectionViewDelegate {
       
       if !isLoading {
         print("맨 아래 도착 ")
+        isLoading = true
         // 서버에서 다음 페이지 GET
         mainViewModel.fetchPokemonList()
-        collectionView.reloadData()
+        //        collectionView.reloadData()
         
       }
     }
-  
+    
   }
   
 }
@@ -158,7 +167,6 @@ extension MainViewController: UICollectionViewDataSource{
     let detailVC = DetailViewController(viewModel: DetailViewModel(pokemonId: pokemonList[indexPath.row].id))
     navigationController?.pushViewController(detailVC, animated: true)
   }
-  
   
   
 }
