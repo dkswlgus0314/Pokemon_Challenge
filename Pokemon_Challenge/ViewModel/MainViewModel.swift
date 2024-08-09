@@ -18,13 +18,7 @@ class MainViewModel {
   // let pokemonListSubject = PublishSubject<[Result]>() //컬렉션뷰에 이미지가 안뜸
   
   
-  //초기화 메서드. 생성 시 fetchPokemonList 호출
-  //  init(){
-  //    fetchPokemonList()
-  //  }
-  
-  
-  //0부터 20개씩 포켓몬 정보 로드
+  // 0부터 20개씩 포켓몬 정보 로드
   func fetchPokemonList() {
     
     guard let url = URL(string: urlString) else {
@@ -33,15 +27,15 @@ class MainViewModel {
       return
     }
     
-    //네트워크 매니저를 통해 데이터 가져옴
+    // 네트워크 매니저를 통해 데이터 가져옴
     NetworkManager.shared.fetch(url: url)
       .subscribe(onSuccess: { [weak self] (resultsResponse: ResultsResponse) in
         print("메인모델뷰 fetchPokemonList(): \(url)")
         self?.offsetNum += 20
         
-        //pokemonListSubject라는 BehaviorSubject에 새로운 데이터를 방출.
-        //resultsResponse.results 데이터를 pokemonListSubject를 통해 구독자에게 전달
-        //여기서 onNext는 데이터 방출하는 역할
+        // pokemonListSubject라는 BehaviorSubject에 새로운 데이터를 방출.
+        // resultsResponse.results 데이터를 pokemonListSubject를 통해 구독자에게 전달
+        // 여기서 onNext는 데이터 방출하는 역할
         self?.pokemonListSubject.onNext(resultsResponse.results)
         print(resultsResponse.results)
       }, onFailure: { [weak self] error in
