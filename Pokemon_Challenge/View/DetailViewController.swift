@@ -96,7 +96,7 @@ class DetailViewController: UIViewController {
         self.typeLabel.text = pokemon.type
         self.heightLabel.text = pokemon.height
         self.weightLabel.text = pokemon.weight
-
+        
       }, onError: { error in
         print("상세뷰컨 데이터 바인딩 에러 발생: \(error) ")
       }).disposed(by: disposeBag)

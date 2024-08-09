@@ -35,7 +35,7 @@ struct PokemonResponseDTO: Codable {  //Response에 쓰는 DTO
     let height = "키 : \(Double(height ?? 0) / 10) m"
     let weight = "몸무게 : \(Double(weight ?? 0) / 10) kg"
     return Pokemon(id: id,
-                    title: title,
+                   title: title,
                    type: type,
                    height: height,
                    weight: weight)
