@@ -10,7 +10,7 @@ struct Result: Codable {
   let name: String
   let url: String
   
-  // 계산속성
+  //연산 프로퍼티
   var id: Int {
     let separator = url.split(separator: "/")
     return Int(separator.last ?? "0") ?? 0

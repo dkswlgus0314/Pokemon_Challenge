@@ -1,4 +1,4 @@
-import Foundation
+
 import UIKit
 import RxSwift
 
@@ -47,6 +47,7 @@ class NetworkManager {
       return Disposables.create()
     }
   }
+  
   
   //MARK: - 포켓몬 이미지 가져오는 메서드
   func configure(with id: Int, completion: @escaping (UIImage?) -> Void) {
